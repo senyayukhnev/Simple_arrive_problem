@@ -51,7 +51,7 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
         prev = points[i-1]
         curr = points[i]
 
-        dist = haversine((prev['lat'], prev['lon']), (curr['lat'], curr['lon'])) * 1000
+        dist = haversine((float(prev['Latitude']), float(prev['Longitude'])), (float(curr['Latitude']), float(curr['Longitude']))) * 1000
         time_diff = (curr['timestamp'] - prev['timestamp']).total_seconds()
         if time_diff > 0:
             speed = (dist / time_diff) * 3.6
@@ -66,7 +66,7 @@ def _find_initial_cluster(points, min_cluster_ratio, stability_threshold):
         return None
     clusters = defaultdict(list)
     for p in points:
-        key = (round(p['lat'], 4), round(p['lon'], 4))
+        key = (round(float(p['Latitude']), 4), round(float(p['Longitude']), 4))
         clusters[key].append(p)
     if clusters:
         main_cluster = max(clusters.values(), key=len)

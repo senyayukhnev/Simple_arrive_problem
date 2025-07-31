@@ -25,7 +25,7 @@ def ensure_local_time(dt_utc, city_prefix):
     tz_mapping = {
         'NSK': 'Asia/Novosibirsk',
         'YR': 'Asia/Yekaterinburg',
-        'YSP': 'Europe/Saint_Petersburg'
+        'YSP': 'Europe/Moscow'
     }
 
     if not dt_utc.tzinfo:
@@ -54,7 +54,7 @@ def detect_events(track_points, order_point, city_code, config=None):
     confirmation_start = None
 
     for i, point in enumerate(track_points):
-        distance = haversine(order_point, (point['lat'], point['lon'])) * 1000
+        distance = haversine(order_point, (float(point['Latitude']), float(point['Longitude']))) * 1000
 
         # Проверка вхождения в зону
         if distance <= radius:
@@ -79,7 +79,7 @@ def detect_events(track_points, order_point, city_code, config=None):
                 if stop_duration >= params['min_stop_time']:
                     events.append({
                         'type': 'departure',
-                        'time': ensure_local_time(point['timestamp'])
+                        'time': ensure_local_time(point['timestamp'], city_code)
                     })
                 in_zone = False
 
@@ -91,11 +91,11 @@ def detect_events(track_points, order_point, city_code, config=None):
 
         if arrivals:
             best_arrival = max(arrivals, key=lambda x: x['confidence'])
-            result['arrival'] = best_arrival['time']
+            result['arrival'] = best_arrival['time_local']
             result['confidence'] = best_arrival['confidence']
 
             for dep in departures:
-                if dep['time'] > best_arrival['time']:
+                if dep['time'] > best_arrival['time_local']:
                     result['departure'] = dep['time']
                     break
     print(f"Найдены события: arrival={result['arrival']}, departure={result['departure']}")

@@ -6,12 +6,12 @@ data_paths:
 gps_params:
   max_speed: 150         # км/ч
   max_accel: 15          # м/с²
-  min_cluster_ratio: 0.7
-  warmup_points: 50
+  min_cluster_ratio: 0.3
+  warmup_points: 10
   stability_threshold: 5
 
 event_params:
-  radius: 100            # метров
+  radius: 300            # метров
   min_stop_time: 300     # секунд (5 минут)
   confirmation_time: 60  # секунд (1 минута)
   max_speed_in_zone: 7   # км/ч
@@ -24,5 +24,5 @@ cities:
     timezone: Asia/Yekaterinburg
     default_radius: 120
   YSP:
-    timezone: Europe/Saint-Petersburg
+    timezone: Europe/Moscow
     default_radius: 80

@@ -13,7 +13,8 @@ def run_pipeline(config):
     tracks = load_tracks(config['data_paths']['track_info'])
 
     print("Grouping tracks...")
-    grouped_tracks = tracks.groupby('RouteCode')
+    #grouped_tracks = tracks.groupby('RouteCode')
+    grouped_tracks = tracks.groupby('route_code')
     print("Уникальные route_code в routes:", routes['route_code'].unique()[:5])
     print("Уникальные route_code в tracks:", tracks['route_code'].unique()[:5])
     results = []
@@ -25,10 +26,10 @@ def run_pipeline(config):
         print(f"\nОбработка {route_code}...")
         print(f"Координаты заказа: {order_point}")
         if route_code in grouped_tracks.groups:
-            track_points = grouped_tracks.get_group(route_code).to_dict('records')
+            track_points = grouped_tracks.get_group(route_code).to_dict(orient='records')
             clean_points = filter_gps_points(
-                track_points
-                ** config['gps_params']
+                track_points,
+                **config['gps_params']
             )
             order_point = (route['Delivery Order Lat'], route['Delivery Order Lon'])
             events = detect_events(
