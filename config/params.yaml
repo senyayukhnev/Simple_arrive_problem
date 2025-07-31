@@ -1,3 +1,8 @@
+output_path: "data/output.csv"
+
+data_paths:
+  route_info: "data/raw/route_info.csv"
+  track_info: "data/raw/track_info.csv"
 gps_params:
   max_speed: 150         # км/ч
   max_accel: 15          # м/с²

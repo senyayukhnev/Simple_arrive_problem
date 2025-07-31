@@ -24,6 +24,8 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
     :param stability_threshold:
     :return:
     """
+    print(f"\nФильтрация {len(points)} точек с параметрами:")
+    print(f"max_speed={max_speed}, min_cluster_ratio={min_cluster_ratio}")
     if any(p is None for p in [max_speed, max_accel, min_cluster_ratio, warmup_points, stability_threshold]):
         config = load_gps_config()
         max_speed = config["max_speed"] or max_speed
@@ -33,6 +35,7 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
         stability_threshold = config["stability_threshold"] or stability_threshold
 
     if not points:
+        print("Нет точек для фильтрации!")
         return []
 
     init_cluster = _find_initial_cluster(
