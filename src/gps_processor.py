@@ -4,7 +4,7 @@ from collections import defaultdict
 from haversine import haversine
 from pathlib import Path
 import numpy as np
-
+from sklearn.cluster import DBSCAN
 
 def load_gps_config():
     config_path = Path(__file__).parent.parent / "config" / "params.yaml"
@@ -17,12 +17,6 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
                       stability_threshold=None):
     """
     :param points: list[dict] - Список точек с ключами ['lat', 'lon', 'timestamp']
-    :param max_speed:
-    :param max_accel:
-    :param min_cluster_ratio:
-    :param warmup_points:
-    :param stability_threshold:
-    :return:
     """
     print(f"\nФильтрация {len(points)} точек с параметрами:")
     print(f"max_speed={max_speed}, min_cluster_ratio={min_cluster_ratio}")
@@ -30,14 +24,14 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
         config = load_gps_config()
         max_speed = config["max_speed"] or max_speed
         max_accel = config["max_accel"] or max_accel
-        min_cluster_ratio = config["max_cluster_ratio"] or min_cluster_ratio
+        min_cluster_ratio = config["min_cluster_ratio"] or min_cluster_ratio
         warmup_points = config["warmup_points"] or warmup_points
         stability_threshold = config["stability_threshold"] or stability_threshold
 
     if not points:
         print("Нет точек для фильтрации!")
         return []
-
+    #points = sorted(points, key=lambda x: x['timestamp'])
     init_cluster = _find_initial_cluster(
         points[:warmup_points],
         min_cluster_ratio,

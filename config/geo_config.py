@@ -3,7 +3,7 @@ import geopandas as gpd
 import numpy as np
 from shapely.geometry.linestring import LineString
 
-# 1. Городские конфигурации
+
 CITY_SETTINGS = {
     'NSK': {
         'timezone': 'Asia/Novosibirsk',
@@ -158,7 +158,7 @@ CITY_SETTINGS = {
         'density_factor': 1.2
     },
     'YR': {
-        'timezone': 'Asia/Yekaterinburg',
+        'timezone': 'Europe/Moscow',
         'default_radius': 120,
         'industrial_zones': [...],
         'density_factor': 1.0
@@ -167,74 +167,6 @@ CITY_SETTINGS = {
 }
 
 
-# 2. Геометрические утилиты
 def is_point_in_polygon(point: tuple, polygon: Polygon) -> bool:
     return polygon.contains(Point(point))
 
-
-def calculate_distance(coord1: tuple, coord2: tuple) -> float:
-    """Расчет расстояния с учетом проекции (более точный, чем haversine)"""
-    # Используется проекция для конкретного региона
-    return gpd.GeoSeries([Point(coord1)], crs="EPSG:4326") \
-        .to_crs("EPSG:3857") \
-        .distance(gpd.GeoSeries([Point(coord2)], crs="EPSG:4326").to_crs("EPSG:3857"))[0]
-
-
-# 3. Зоны особого внимания
-SPECIAL_ZONES = {
-    'NSK': {
-        'high_gps_noise_areas': [
-            Polygon([(55.018, 82.940), (55.020, 82.945), ...]),  # Центр города
-            Polygon([...])  # Промзона
-        ],
-        'tunnels': [
-            {'path': LineString([...]), 'depth': 15}
-        ]
-    }
-}
-
-
-# 4. Адаптивные параметры для алгоритмов
-def get_dynamic_radius(order_point: tuple, city: str) -> float:
-    """Рассчитывает радиус на основе типа местности"""
-    point = Point(order_point)
-
-    # Проверка промышленных зон
-    for zone in CITY_SETTINGS[city]['industrial_zones']:
-        if zone.contains(point):
-            return 150  # Больший радиус для промзон
-
-    # Проверка близости к воде
-    if is_point_in_polygon(order_point, CITY_SETTINGS[city]['ob_water']):
-        return 70  # Меньший радиус у воды
-
-    return CITY_SETTINGS[city]['default_radius']
-
-
-# 5. Классы для сложных объектов
-class UrbanTerrain:
-    def __init__(self, city):
-        self.city = city
-        self.load_terrain_data()
-
-    def load_terrain_data(self):
-        """Загрузка данных о рельефе (пример)"""
-        self.elevation_map = {...}
-
-    def get_altitude(self, point):
-        return self.elevation_map.get(point, 0)
-
-
-# 6. Предвычисленные геоданные
-# Загрузка границ районов из GeoJSON
-with open('data/geo/novosibirsk_districts.geojson') as f:
-    NSK_DISTRICTS = gpd.read_file(f)
-
-# 7. Константы для GPS фильтрации
-GPS_ERROR_MODELS = {
-    'urban_canyon': {
-        'max_error': 500,  # метров
-        'probability': 0.3
-    },
-    'industrial': {...}
-}

@@ -1,4 +1,4 @@
-output_path: "data/output.csv"
+output_path: "data/output_test.csv"
 
 data_paths:
   route_info: "data/raw/route_info.csv"
@@ -6,23 +6,23 @@ data_paths:
 gps_params:
   max_speed: 150         # км/ч
   max_accel: 15          # м/с²
-  min_cluster_ratio: 0.3
+  min_cluster_ratio: 0.7
   warmup_points: 10
   stability_threshold: 5
 
 event_params:
-  radius: 300            # метров
+  radius: 200            # метров
   min_stop_time: 300     # секунд (5 минут)
   confirmation_time: 60  # секунд (1 минута)
-  max_speed_in_zone: 7   # км/ч
+  max_speed_in_zone: 25   # км/ч
 
 cities:
   NSK:
     timezone: Asia/Novosibirsk
     default_radius: 100
   YR:
-    timezone: Asia/Yekaterinburg
-    default_radius: 120
+    timezone: Europe/Moscow
+    default_radius: 80
   YSP:
     timezone: Europe/Moscow
     default_radius: 80
