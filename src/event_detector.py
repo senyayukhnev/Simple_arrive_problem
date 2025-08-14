@@ -113,16 +113,7 @@ def load_config():
         return yaml.safe_load(f)
 
 def ensure_local_time(dt_utc, city_prefix):
-    """
-    Конвертирует время из UTC в локальное время города.
 
-    Args:
-        dt_utc (datetime): Временная метка в UTC.
-        city_prefix (str): Префикс города ('NSK', 'YR', 'YSP').
-
-    Returns:
-        datetime: Локальное время с учётом часового пояса.
-    """
     tz_mapping = {
         'NSK': 'Asia/Novosibirsk',
         'YR': 'Europe/Moscow',
@@ -134,18 +125,6 @@ def ensure_local_time(dt_utc, city_prefix):
     return dt_utc.astimezone(tz)
 
 def detect_events(track_points, order_point, city_code, config=None):
-    """
-    Детектирует события arrival и departure на основе GPS-точек.
-
-    Args:
-        track_points (list): Список словарей с ключами 'Latitude', 'Longitude', 'timestamp', 'speed'.
-        order_point (tuple): Координаты заказа (lat, lon).
-        city_code (str): Префикс города ('NSK', 'YR', 'YSP').
-        config (dict): Конфигурация из params.yaml.
-
-    Returns:
-        dict: Словарь с 'arrival', 'departure', 'confidence'.
-    """
     print(f"\nДетекция событий для {len(track_points)} точек")
     print(f"Центр зоны: {order_point}, радиус: {config['event_params']['radius']} м")
 
@@ -159,7 +138,7 @@ def detect_events(track_points, order_point, city_code, config=None):
     params = config['event_params']
     radius = params['radius']
     confirmation_time = params.get('confirmation_time', 60)  # По умолчанию 60 сек
-    max_speed_in_zone = params.get('max_speed_in_zone', float('inf'))  # Игнорировать, если не указано
+    max_speed_in_zone = params.get('max_speed_in_zone', float('inf'))
 
     events = []
     in_zone = False

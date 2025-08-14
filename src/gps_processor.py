@@ -4,7 +4,7 @@ from collections import defaultdict
 from haversine import haversine
 from pathlib import Path
 import numpy as np
-from sklearn.cluster import DBSCAN
+#from sklearn.cluster import DBSCAN
 
 def load_gps_config():
     config_path = Path(__file__).parent.parent / "config" / "params.yaml"
@@ -32,13 +32,19 @@ def filter_gps_points(points, max_speed=None, max_accel=None, min_cluster_ratio=
         print("Нет точек для фильтрации!")
         return []
     #points = sorted(points, key=lambda x: x['timestamp'])
+
     init_cluster = _find_initial_cluster(
         points[:warmup_points],
         min_cluster_ratio,
         stability_threshold
     )
+    i = warmup_points
+    while init_cluster is None:
+
+        init_cluster = _find_initial_cluster(points[i:i + warmup_points], min_cluster_ratio, stability_threshold)
+        i += warmup_points
     if not init_cluster:
-        return []
+        return [] 
 
     valid_points = []
     for i in range(1, len(points)):
