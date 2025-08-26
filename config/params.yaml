@@ -1,4 +1,4 @@
-output_path: "data/output_test.csv"
+output_path: "data/output_test_test.csv"
 
 data_paths:
   route_info: "data/raw/route_info_test.csv"
@@ -13,8 +13,9 @@ gps_params:
 event_params:
   radius: 200            # метров
   min_stop_time: 300     # секунд (5 минут)
-  confirmation_time: 300  # секунд (1 минута)
+  confirmation_time: 60  # секунд (1 минута)
   max_speed_in_zone: 25   # км/ч
+  reentry_window: 300
 
 cities:
   NSK:

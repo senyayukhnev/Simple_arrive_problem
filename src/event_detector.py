@@ -139,6 +139,7 @@ def detect_events(track_points, order_point, city_code, config=None):
     radius = params['radius']
     confirmation_time = params.get('confirmation_time', 60)  # По умолчанию 60 сек
     max_speed_in_zone = params.get('max_speed_in_zone', float('inf'))
+    reentry_window = params.get('reentry_window', 300)  # Окно для проверки reentry (по умолчанию 5 мин)
 
     events = []
     in_zone = False
@@ -183,6 +184,7 @@ def detect_events(track_points, order_point, city_code, config=None):
                 in_zone = False
                 enter_time = None
                 last_in_zone_time = None
+                arrival_registered = False  # Новое: сброс флага при выходе, чтобы позволить новый arrival при reentry
 
     # Проверка последнего пребывания в зоне
     if in_zone and last_in_zone_time and arrival_registered:
@@ -206,11 +208,24 @@ def detect_events(track_points, order_point, city_code, config=None):
             result['arrival'] = best_arrival['time_local']
             result['confidence'] = best_arrival['confidence']
 
-            for dep in departures:
-                if dep['time_local'] > best_arrival['time_local']:
-                    result['departure'] = dep['time_local']
-                    result['confidence'] = max(result['confidence'], dep['confidence'])
+            # Пост-обработка: ищем истинный departure, игнорируя ложные (с reentry в окне)
+            potential_departures = [dep for dep in departures if dep['time_local'] > best_arrival['time_local']]
+            dep_index = 0
+            while dep_index < len(potential_departures):
+                current_dep = potential_departures[dep_index]
+                reentry_time_limit = current_dep['time_local'] + timedelta(seconds=reentry_window)
+
+                # Проверяем, есть ли reentry (другой arrival) в следующие 5 мин
+                has_reentry = any(
+                    arr['time_local'] > current_dep['time_local'] and arr['time_local'] <= reentry_time_limit
+                    for arr in arrivals
+                )
+
+                if not has_reentry:
+                    result['departure'] = current_dep['time_local']
+                    result['confidence'] = max(result['confidence'], current_dep['confidence'])
                     break
+                dep_index += 1  # Переходим к следующему departure
 
     print(f"Найдены события: arrival={result['arrival']}, departure={result['departure']}, confidence={result['confidence']:.2f}")
     return result
