@@ -1,8 +1,8 @@
 output_path: "data/output_test.csv"
 
 data_paths:
-  route_info: "data/raw/route_info.csv"
-  track_info: "data/raw/track_info.csv"
+  route_info: "data/raw/route_info_test.csv"
+  track_info: "data/raw/track_info_test.csv"
 gps_params:
   max_speed: 150         # км/ч
   max_accel: 15          # м/с²
@@ -13,7 +13,7 @@ gps_params:
 event_params:
   radius: 200            # метров
   min_stop_time: 300     # секунд (5 минут)
-  confirmation_time: 60  # секунд (1 минута)
+  confirmation_time: 300  # секунд (1 минута)
   max_speed_in_zone: 25   # км/ч
 
 cities:
