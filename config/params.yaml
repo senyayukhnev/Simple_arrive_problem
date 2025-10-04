@@ -11,11 +11,12 @@ gps_params:
   stability_threshold: 7
 
 event_params:
-  radius: 200            # метров
+  radius: 250            # метров
   min_stop_time: 300     # секунд (5 минут)
   confirmation_time: 300 # секунд (1 минута)
   max_speed_in_zone: 25   # км/ч
   reentry_window: 300
+  next_order_window: 0
 
 cities:
   NSK:

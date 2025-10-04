@@ -108,6 +108,7 @@ def run_pipeline(config):
         print(f"Координаты заказа: {order_point}")
         if route_code in grouped_tracks.groups:
             track_points = grouped_tracks.get_group(route_code).to_dict('records')
+            track_points = sorted(track_points, key=lambda x: x['timestamp'])
             print(f"Количество точек для {route_code}: {len(track_points)}")
             clean_points = filter_gps_points(
                 track_points,
